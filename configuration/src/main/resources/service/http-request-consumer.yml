@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: http-message
+      kafka:
+        binder:
+          zkNodes: zookeeper:2181
+          brokers: kafka:9092
+
+
+server:
+  port: 8090
+
+http:
+  prefix: 'Prefix'

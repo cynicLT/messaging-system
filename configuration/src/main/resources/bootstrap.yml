@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: configuration
+  cloud:
+    config:
+      enabled: false
+      server:
+        native:
+          search-locations: classpath:/service
+  profiles:
+     active: native
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${REGISTRY_SERVICE_ZONE}
+  instance:
+      prefer-ip-address: true
+      leaseRenewalIntervalInSeconds: 1
+      leaseExpirationDurationInSeconds: 2
+server:
+  port: 8888

@@ -1,0 +1,9 @@
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: ${REGISTRY_SERVICE_ZONE}
+logging:
+ level:
+  root: ERROR

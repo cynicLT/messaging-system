@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: event-processor
+  cloud:
+    config:
+      discovery:
+        serviceId: ${CONFIGURATION_SERVICE_NAME}
+        enabled: true
+eureka:
+  client:
+    registerWithEureka: false
+    serviceUrl:
+      defaultZone: ${REGISTRY_SERVICE_ZONE}
+  instance:
+      prefer-ip-address: true
+      leaseRenewalIntervalInSeconds: 1
+      leaseExpirationDurationInSeconds: 2

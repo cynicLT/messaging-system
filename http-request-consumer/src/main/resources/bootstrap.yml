@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: http-request-consumer
+  cloud:
+    config:
+      discovery:
+        serviceId: ${CONFIGURATION_SERVICE_NAME}
+        enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${REGISTRY_SERVICE_ZONE}
+  instance:
+      prefer-ip-address: true
+      leaseRenewalIntervalInSeconds: 1
+      leaseExpirationDurationInSeconds: 2

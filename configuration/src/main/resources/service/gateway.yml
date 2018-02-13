@@ -1,0 +1,11 @@
+zuul:
+  ignoredServices: '*'
+  host:
+    connect-timeout-millis: 60000
+    socket-timeout-millis: 60000
+  routes:
+    api:
+      path: /api/**
+      serviceId: http-request-consumer
+server:
+  port: 4000

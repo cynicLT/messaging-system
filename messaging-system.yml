@@ -1,0 +1,123 @@
+version: '2.1'
+services:
+# Eureka
+  registry:
+    mem_limit: 512m
+    restart: always
+    build: ./discovery/
+    ports:
+      - "8080:8080"
+    networks:
+      - messaging-system-network
+    environment:
+      - REGISTRY_SERVICE_ZONE=http://discovery:8080/eureka/
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8080"]
+        interval: 15s
+        timeout: 10s
+
+# Configuration service
+  configuration:
+    mem_limit: 256m
+    restart: always
+    build: ./configuration/
+    networks:
+      - messaging-system-network
+    depends_on:
+      registry:
+        condition: service_healthy
+    environment:
+      - REGISTRY_SERVICE_ZONE=http://registry:8080/eureka/
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+        interval: 15s
+        timeout: 10s
+
+# Zuul
+  gateway:
+    build: ./gateway/
+    mem_limit: 256m
+    restart: always
+    ports:
+      - "80:4000"
+    environment:
+      - REGISTRY_SERVICE_ZONE=http://registry:8080/eureka/
+      - CONFIGURATION_SERVICE_NAME=configuration
+    networks:
+      - messaging-system-network
+    depends_on:
+      registry:
+        condition: service_healthy
+      configuration:
+        condition: service_healthy
+      http-request-consumer:
+        condition: service_healthy
+
+# Application
+  http-request-consumer:
+    build: ./http-request-consumer/
+    restart: always
+    mem_limit: 512m
+    environment:
+      - REGISTRY_SERVICE_ZONE=http://registry:8080/eureka/
+      - CONFIGURATION_SERVICE_NAME=configuration
+    networks:
+      - messaging-system-network
+    depends_on:
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+      registry:
+        condition: service_healthy
+      configuration:
+        condition: service_healthy
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+        interval: 30s
+        timeout: 10s
+
+  event-processor:
+    build: ./event-processor/
+    mem_limit: 512m
+    restart: always
+    environment:
+      - REGISTRY_SERVICE_ZONE=http://registry:8080/eureka/
+      - CONFIGURATION_SERVICE_NAME=configuration
+    networks:
+      - messaging-system-network
+    depends_on:
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
+      registry:
+        condition: service_healthy
+      configuration:
+        condition: service_healthy
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+        interval: 30s
+        timeout: 10s
+
+#Zookeeper
+  zookeeper:
+    image: zookeeper:3.4
+    networks:
+      - messaging-system-network
+
+#Kafka
+  kafka:
+    build: ./kafka/
+    restart: always
+    environment:
+      - ZOOKEEPER_IP=zookeeper
+    depends_on:
+      zookeeper:
+        condition: service_started
+    networks:
+      - messaging-system-network
+
+
+networks:
+    messaging-system-network:

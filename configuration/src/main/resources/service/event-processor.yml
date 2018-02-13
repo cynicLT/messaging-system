@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: http-message
+          group: http-messages
+      kafka:
+        binder:
+          zkNodes: zookeeper:2181
+          brokers: kafka:9092
+
+
+server:
+  port: 8100
+logging:
+  level:
+    org:
+      cynic:
+        messaging:
+          consumer:
+            service: INFO

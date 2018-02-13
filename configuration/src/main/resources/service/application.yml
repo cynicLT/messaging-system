@@ -1,0 +1,22 @@
+logging:
+  level:
+    root: ERROR
+server:
+  error:
+    whitelabel:
+      enabled: false
+endpoints:
+  jmx:
+    enabled: false
+spring:
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000

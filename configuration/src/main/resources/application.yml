@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+      server:
+        native:
+          search-locations: classpath:/service
+  profiles:
+     active: native
