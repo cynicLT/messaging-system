@@ -9,5 +9,4 @@ RUN tar -zx -C /kafka --strip-components=1 -f kafka_${KAFKA_SCALA_VERSION}-${KAF
 ADD config /kafka/config
 ADD start.sh /start.sh
 ENV PATH /kafka/bin:$PATH
-WORKDIR /kafka
-CMD ["/start.sh"]
+ENTRYPOINT /start.sh
